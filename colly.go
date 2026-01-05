@@ -214,6 +214,9 @@ const (
 	CheckRevisitKey
 )
 
+// The prefix for environment variables of Colly settings
+const envVariablePrefix = "COLLY_"
+
 var (
 	// ErrForbiddenDomain is the error thrown if visiting
 	// a domain which is not allowed in AllowedDomains
@@ -1507,10 +1510,10 @@ func (c *Collector) checkRedirectFunc() func(req *http.Request, via []*http.Requ
 
 func (c *Collector) parseSettingsFromEnv() {
 	for _, e := range os.Environ() {
-		if !strings.HasPrefix(e, "COLLY_") {
+		if !strings.HasPrefix(e, envVariablePrefix) {
 			continue
 		}
-		pair := strings.SplitN(e[6:], "=", 2)
+		pair := strings.SplitN(e[len(envVariablePrefix):], "=", 2)
 		if f, ok := envMap[pair[0]]; ok {
 			f(c, pair[1])
 		} else {
